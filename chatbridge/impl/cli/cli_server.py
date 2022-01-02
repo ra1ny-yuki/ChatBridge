@@ -1,5 +1,6 @@
 import time
 
+from prompt_toolkit import prompt
 from chatbridge.core.config import ServerConfig
 from chatbridge.core.network.basic import Address
 from chatbridge.core.network.protocol import ChatPayload
@@ -30,7 +31,7 @@ class CLIServer(ChatBridgeServer):
 
 	def console_loop(self):
 		while self.is_running():
-			text = input()
+			text = prompt('> ')
 			self.logger.info('Processing user input "{}"'.format(text))
 			if text == 'stop':
 				self.stop()

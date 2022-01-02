@@ -12,7 +12,9 @@ def client():
 
 def server():
 	from chatbridge.impl.cli import cli_server
-	cli_server.main()
+	from prompt_toolkit.patch_stdout import patch_stdout
+	with patch_stdout(True):
+		cli_server.main()
 
 
 def discord_bot():

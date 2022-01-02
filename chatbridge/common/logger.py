@@ -14,13 +14,30 @@ LOGGING_DIR = os.path.join('logs')
 
 class SyncStdoutStreamHandler(StreamHandler):
 	__write_lock = RLock()
+	__instance_lock = RLock()
+	__instances = weakref.WeakSet()  # type: Set[SyncStdoutStreamHandler]
 
 	def __init__(self):
 		super().__init__(sys.stdout)
+		with self.__instance_lock:
+			self.__instances.add(self)
 
 	def emit(self, record) -> None:
 		with self.__write_lock:
 			super().emit(record)
+
+	@classmethod
+	def update_stdout(cls, stream=None):
+		if stream is None:
+			stream = sys.stdout
+		with cls.__instance_lock:
+			instances = list(cls.__instances)
+		for inst in instances:
+			inst.acquire()  # use Handler's lock
+			try:
+				inst.stream = stream
+			finally:
+				inst.release()
 
 
 def _create_file_handler(name: str) -> FileHandler:
@@ -82,6 +99,7 @@ class ChatBridgeLogger(Logger):
 			datefmt='%H:%M:%S'
 		))
 		self.addHandler(self.console_handler)
+		self.console_handler.update_stdout()
 		if file_name is not None and file_handler is None:
 			self.file_handler = _create_file_handler(file_name)
 		else:
