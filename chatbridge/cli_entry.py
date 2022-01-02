@@ -1,5 +1,7 @@
 import sys
 
+from prompt_toolkit.patch_stdout import patch_stdout
+
 __all__ = [
 	'main'
 ]
@@ -12,9 +14,7 @@ def client():
 
 def server():
 	from chatbridge.impl.cli import cli_server
-	from prompt_toolkit.patch_stdout import patch_stdout
-	with patch_stdout(True):
-		cli_server.main()
+	cli_server.main()
 
 
 def discord_bot():
@@ -42,7 +42,8 @@ def main():
 		arg = sys.argv[1]
 		entry = getattr(sys.modules[__name__], arg, None)
 		if entry is not None and entry not in __all__ and callable(entry):
-			entry()
+			with patch_stdout(True):
+				entry()
 		else:
 			print('Unknown argument {}'.format(arg))
 	else:

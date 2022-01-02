@@ -3,6 +3,8 @@ from chatbridge.core.config import ClientConfig
 from chatbridge.core.network.protocol import ChatPayload
 from chatbridge.impl import utils
 
+from prompt_toolkit import prompt
+
 ConfigFile = 'ChatBridge_client.json'
 
 
@@ -16,7 +18,7 @@ class CLIClient(ChatBridgeClient):
 
 	def console_loop(self):
 		while True:
-			text = input()
+			text = prompt('> ')
 			self.logger.info('Processing user input "{}"'.format(text))
 			if text == 'start':
 				self.start()

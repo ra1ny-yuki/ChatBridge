@@ -7,6 +7,7 @@ import traceback
 from concurrent.futures.thread import ThreadPoolExecutor
 from threading import Lock
 from typing import List, Dict, Set, Callable, Collection, Any, Tuple
+from prompt_toolkit import prompt
 
 import parse
 from mcdreforged.api.rcon import RconConnection
@@ -114,7 +115,7 @@ class OnlineChatClient(ChatBridgeClient):
 def console_input_loop():
 	while True:
 		try:
-			text = input()
+			text = prompt('> ')
 			if text in ['!!online', 'online']:
 				print('\n'.join(chatClient.query()))
 			elif text == 'stop':
