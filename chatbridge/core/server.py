@@ -88,7 +88,7 @@ class ChatBridgeServer(ChatBridgeBase):
 	MAXIMUM_LOGIN_DURATION = 20  # 20s
 
 	def __init__(self, aes_key: str, server_address: Address):
-		super().__init__('ChatBridge', aes_key)
+		super().__init__('CBServer', aes_key)
 		self.server_address = server_address
 		self.clients: Dict[str, _ClientConnection] = {}
 		self.__coming_connections: List[ComingConnection] = []
@@ -249,7 +249,7 @@ class ChatBridgeServer(ChatBridgeBase):
 					client.get_connection_client_name()))
 		self.send_packet(packet)
 
-	def say(self, message: str):
+	def broadcast_message(self, message: str):
 		payload = ChatPayload(
 			author='',
 			message=message
@@ -261,6 +261,12 @@ class ChatBridgeServer(ChatBridgeBase):
 			type=PacketType.chat,
 			payload=payload.serialize()
 		)
+		self.log_packet(packet, to_client=False)
+		try:
+			self.on_chat(self.get_name(), ChatPayload.deserialize(packet.payload))
+		except:
+			self.logger.exception('Error when deserialize chat packet from {}'.format(
+				self.get_name()))
 		self.send_packet(packet)
 
 	def send_packet(self, packet: ChatBridgePacket):

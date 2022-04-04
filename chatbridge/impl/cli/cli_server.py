@@ -47,7 +47,6 @@ class CLIServer(ChatBridgeServer):
 	def console_loop(self):
 		while self.is_running():
 			text = prompt('> ')
-			self.logger.info('Processing user input "{}"'.format(text))
 			if text == 'stop':
 				self.stop()
 			elif text.startswith('stop') and text.find(' ') != -1:
@@ -71,7 +70,7 @@ class CLIServer(ChatBridgeServer):
 			elif text == 'thread_dump':
 				self.logger.info(thread_dump())
 			elif text.split(' ')[0]:
-				self.say(text.split(' ', maxsplit=1)[1])
+				self.broadcast_message(text.split(' ', maxsplit=1)[1])
 			else:
 				self.logger.info('stop": stop the server')
 				self.logger.info('stop <client_name>": stop a client')
