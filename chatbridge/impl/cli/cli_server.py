@@ -70,10 +70,13 @@ class CLIServer(ChatBridgeServer):
 				self.logger.info('Debug logging off')
 			elif text == 'thread_dump':
 				self.logger.info(thread_dump())
+			elif text.split(' ')[0]:
+				self.say(text.split(' ', maxsplit=1)[1])
 			else:
 				self.logger.info('stop": stop the server')
 				self.logger.info('stop <client_name>": stop a client')
 				self.logger.info('list": show the client list')
+				self.logger.info('say <message>": broadcast message')
 				self.logger.info('debug on|off": switch debug logging')
 
 
