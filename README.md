@@ -1,4 +1,4 @@
-# ChatBridge
+# ChatBridge #
 
 > Broadcast chat between Minecraft servers or even discord server
 
